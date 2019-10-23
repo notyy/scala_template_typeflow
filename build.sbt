@@ -1,9 +1,5 @@
 import sbt._
 
-//com.twitter.scrooge.ScroogeSBT.newSettings
-//
-//scroogeBuildOptions in Compile := Seq("--finagle", "--verbose")
-// set the name of the project
 name := "scala_template_typeflow"
 
 version := "0.0.1"
@@ -21,54 +17,18 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  // "org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
   "org.pegdown" % "pegdown" % "1.6.0" % "test", //used in html report
   "org.scalactic" %% "scalactic" % "3.0.8",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "org.slf4j" % "slf4j-api" % "1.7.7",
-  // "com.storm-enroute" %% "scalameter" % "0.8.2" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
-  "junit" % "junit" % "4.11" % "test",
-  "com.novocode" % "junit-interface" % "0.11" % "test",
-  "com.h2database" % "h2" % "1.3.176",
-  "org.mockito" % "mockito-all" % "1.9.5" % "test,provided",
-  // "com.typesafe.akka" %% "akka-actor" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-agent" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-camel" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-cluster" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-cluster-metrics" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-cluster-sharding" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-cluster-tools" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-distributed-data" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-multi-node-testkit" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-osgi" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-persistence" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-persistence-query" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-persistence-tck" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-remote" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-slf4j" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-stream" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-testkit" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-typed" % "2.5.3",
-  // "com.typesafe.akka" %% "akka-contrib" % "2.5.3",
-  // "com.googlecode.scalascriptengine" %% "scalascriptengine" % "1.3.11",
-  // "org.scala-lang" % "scala-compiler" % "2.12.3",
   "org.seleniumhq.selenium" % "selenium-java" % "2.35.0" % "test",
   "org.json4s" %% "json4s-native" % "3.6.7",
-//  "org.hamcrest" % "hamcrest-junit" %"2.0.0.0",
-//  "org.mockito" % "mockito-core" % "2.7.22",
-  // "org.quartz-scheduler" % "quartz" % "2.2.3",
-  // "org.quartz-scheduler" % "quartz-jobs" % "2.2.3",
-//  "com.typesafe.slick" %% "slick" % "3.3.2",
-//  "com.typesafe.slick" %% "slick-hikaricp" % "3.3.2",
-//  "com.github.dreamhead" % "moco-core" % "0.11.1" exclude("org.apache.httpcomponents", "httpclient"),
   "org.typelevel" %% "cats-core" % "2.0.0",
   "com.aliyun" % "aliyun-java-sdk-fc" % "1.4.0",
   "com.aliyun.fc.runtime" % "fc-java-core" % "1.3.0",
-  "com.aliyun.oss" % "aliyun-sdk-oss" % "3.6.0",
-  "org.json4s" %% "json4s-native" % "3.6.7"
+  "com.aliyun.oss" % "aliyun-sdk-oss" % "3.6.0"
 )
 
 logBuffered := false
@@ -84,23 +44,6 @@ javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
 
 // append -deprecation to the options passed to the Scala compiler
 scalacOptions += "-deprecation"
-
-// incOptions := incOptions.value.withNameHashing(true)
-
-// set the initial commands when entering 'console' only
-// initialCommands in console := "import com.kaopua.recall._"
-
-// set the main class for packaging the main jar
-// 'run' will still auto-detect and prompt
-// change Compile to Test to set it for the test jar
-// mainClass in (Compile, packageBin) := Some("com.kaopua.recall.Main")
-
-// set the main class for the main 'run' task
-// change Compile to Test to set it for 'test:run'
-// mainClass in (Compile, run) := Some("com.kaopua.recall.Main")
-
-// set the main class for the main 'test:run' task
-// mainClass in (Test, run) := Some("com.kaopua.recall.Main")
 
 // disable updating dynamic revisions (including -SNAPSHOT versions)
 offline := true
