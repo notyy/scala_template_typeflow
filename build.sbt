@@ -4,7 +4,7 @@ import sbt._
 //
 //scroogeBuildOptions in Compile := Seq("--finagle", "--verbose")
 // set the name of the project
-name := "type-flow"
+name := "scala_template_typeflow"
 
 version := "0.0.1"
 
