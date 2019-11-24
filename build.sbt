@@ -28,7 +28,8 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "2.0.0",
   "com.aliyun" % "aliyun-java-sdk-fc" % "1.4.0",
   "com.aliyun.fc.runtime" % "fc-java-core" % "1.3.0",
-  "com.aliyun.oss" % "aliyun-sdk-oss" % "3.6.0"
+  "com.aliyun.oss" % "aliyun-sdk-oss" % "3.6.0",
+  "io.vavr" % "vavr" % "0.9.3"
 )
 
 logBuffered := false
@@ -40,7 +41,7 @@ maxErrors := 20
 pollInterval := scala.concurrent.duration.FiniteDuration(1000L, "ms")
 
 // append several options to the list of options passed to the Java compiler
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 
 // append -deprecation to the options passed to the Scala compiler
 scalacOptions += "-deprecation"
