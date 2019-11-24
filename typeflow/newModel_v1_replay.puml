@@ -1,0 +1,61 @@
+
+@startuml
+
+skinparam class {
+	BackgroundColor<<CommandLineInputEndpoint>> BurlyWood
+	BackgroundColor<<FileInputEndpoint>> BurlyWood
+    BackgroundColor<<CommandLineArgsInputEndpoint>> BurlyWood
+    BackgroundColor<<AliyunHttpInputEndpoint>> BurlyWood
+    BackgroundColor<<OutputEndpoint>> BurlyWood
+    BackgroundColor<<PureFunction>> LightBlue
+    BackgroundColor<<AlternativePath>> Crimson
+    BackgroundColor<<Resource>> Brown
+}
+
+class NumInput <<CommandLineInputEndpoint>>
+class Add2 <<PureFunction>>
+class Add <<PureFunction>>
+class Print <<OutputEndpoint>>
+class Multi3 <<PureFunction>>
+class Accumulate <<PureFunction>>
+class LoadAccumulateValue <<OutputEndpoint>>
+class SaveAccumulateValue <<OutputEndpoint>>
+class AccumulateValueResource <<Resource>>
+class Dispatch <<PureFunction>>
+class LoadTestRecord <<FileInputEndpoint>>
+class Split <<PureFunction>>
+class TestRecord <<Resource>>
+class Compare <<PureFunction>>
+class PrintCompareResult <<OutputEndpoint>>
+
+LoadAccumulateValue .. AccumulateValueResource
+SaveAccumulateValue .. AccumulateValueResource
+NumInput --> NI::Integer
+LoadTestRecord --> LTR::String
+LoadTestRecord .. TestRecord
+LTR::String --> Split
+Split --> "1" SPL_INPUT::Integer
+Split --> "2" SPL_ACCU::Integer
+SPL_INPUT::Integer --> "1" Dispatch
+NI::Integer --> "1" Dispatch
+Dispatch --> "1" DI::Integer
+Dispatch --> "2" DI::Unit
+DI::Unit --> LoadAccumulateValue
+LoadAccumulateValue --> LAL::Integer
+LAL::Integer --> "1" Accumulate
+DI::Integer --> Add2
+DI::Integer --> Multi3
+Add2 --> A2::Integer
+A2::Integer --> "2" Add
+Multi3 --> M3::Integer
+M3::Integer --> "1" Add
+Add --> A::Integer
+A::Integer --> "2" Accumulate
+Accumulate --> AC::Integer
+AC::Integer --> Print
+AC::Integer --> SaveAccumulateValue
+AC::Integer --> "1" Compare
+SPL_ACCU::Integer --> "2" Compare
+Compare --> Boolean
+Boolean --> PrintCompareResult
+@enduml

@@ -133,6 +133,34 @@ ok,执行以下，输入1，2，3后，我的record.txt文件记录了如下内�
 你呢？
 
 ### 回放测试
+在前一步的练习中，我们记录下了每次用户输入的整数和程序执行后存储到累计值中的结果。
+我们现在可以重放这个记录来对我们的程序做回归测试。
+
+打开`newModel_v1_replay.puml`查看，如下图所示：
+![下图](http://www.plantuml.com/plantuml/png/bLFVQzim47xU_HMYxoqiVGibDF5M5l0oan_Run2sS4HboSYdZZBslq-UOfznPBCK6f_rVT_TvxiJF3V8BRfA0JIlKjVSyehbYZSD-mqVDZn_BQrnkaYCClRfAJ5LnNMHIYsskdRuMHUraHfNAxPnLht_CAQ8o5wack4p_pTNQMtBvaRrMibtfxyWrZSAlpcyYPyvArwSpb4QxTcfBC-uKKvCsK9XDKVv9ZAEPoz8hAmQe-FqlMYCixbeRLZpIyCVW32RdQl-VHYR6yc5kowA1Hix9MmAognFmgWZewnVdKBvE9atprtb54SnnKWDBuZrdIidfeiT-9luR_A8s3MHKJzxwYVPr1ppyvp9esXmBt9Z2qQB7B5OAubJUIX7p8MVOCsjc1t4XUErJaMd0h66FZnCTGDYBPsXzmjtVxzYk-rokTKeIc5XrA8MJe_xvVA0tdOvXdq5UeC1iHM67aBx6-hSVRnZXopzkTrbfoEL710MWR1EaXFXrv8-MpTms6rdm2uWXDWZS170avO8NT0YiVsEZIXmrodbfvU1DL91y49mUxsl3iFjX1OBf0KL6CJzDtWY14sGFnATOhBJqlr_I3t874bCnYaCkeI48UwLOUMlJYChInnorzqdeCqOk-eOuHdyR8nHWckuFDkpoDM3Pw4BLodu2m00)
+和`newModel_v1_record.puml`相比，可以看到我们增加了一个新的输入端口`LoadTestRecord`
+
+继续贯彻输入端口不做业务处理的原则，这个输入端口只是逐行读取前面记录的测试数据，每行触发一次数据流执行。
+
+输入的字符串交给Split函数，拆分成输入值和期望值两个整数，输入值传给`Dispatch`函数，从而触发原本的业务流程。期望值传给`Compare`函数。
+`Compare`函数同时接受原本业务流程最终计算出的累计值，然后在进行比较，输出Bool值，然后打印输出。
+
+可以看出这个模型相当于给原本需要用户手工逐行输入的业务流程增加了一个自动重放入参的入口，然后比较预期的输出结果，从而达到回归测试的效果。
+
+闲话少说，生成代码
+```
+./genCode.sh typeflow/newModel_v1_replay.puml
+```
+继续填空，`Compare`很简单，只是要注意用`equals`而不是`==`, `PrintCompareResult`也很简单，把参数填上就好了。
+
+`Split`略为复杂，因为Split要返回两个整数，分别给不同的数据流，而Java不支持元组，所以我这里用[vavr库](https://www.vavr.io/vavr-docs/#_tuples)来实现。
+请参考ref_code/Split.java
+
+`LoadTestRecord`生成在scala工程里，略做修改，第15行，输入上一步练习记录数据的文件路径`./localoutput/record.txt`，
+修改第17行，把toInt去掉。如果`./localoutput/accu.txt`里面有值，**记得清掉**。
+
+现在执行`LoadTestRecord`，即可运行。
+
 ### 实现阿里云函数计算版本
 ### 异常处理
 ### 自定义类型和中文建模
