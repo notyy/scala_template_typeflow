@@ -1,4 +1,7 @@
 # scala_template_typeflow
+
+[TOC]
+
 类型流是我设计的用于大规模软件工厂的**方法论**和开发工具，以云函数计算（Serverless）为目标平台、以领域模型驱动和函数式编程为指导。
 
 当前还出于比较早期的阶段，暂时请勿用于生产，但非常欢迎开发人员尝试使用，给我反馈，让我更好的改进，给大家提供更好的开发工具。
@@ -164,5 +167,62 @@ ok,执行以下，输入1，2，3后，我的record.txt文件记录了如下内�
 现在执行`LoadTestRecord`，即可运行。
 
 ### 实现阿里云函数计算版本
+先声明，本人没有收阿里云的广告费~~~，只是接触的最早，用起来又很方便，所以先出了阿里云的版本。 将来肯定还要支持aws lambda，华为云等多种云平台的。
+
+在这个例子里，我用了阿里云函数计算服务（function computing）和对象存储服务（Object Storage Service —— OSS），oss因为极其便宜，所以特别适合用来做实现，mysql有点小贵。
+
+阿里云资源的购买和配置我这里就不多说了，请自行查阅阿里云的文档。 在本地需要配置好[ossutil](https://helpcdn.aliyun.com/document_detail/50452.html)和[fun](https://help.aliyun.com/document_detail/64204.html). 
+配置好你的阿里云账户。注意用fun需要使用你的root账户的ACCESS_KEY等，不能用另建的安全账户，否则会出错。
+
+另外，我准备了一段视频，你如果只是想了解操作的过程和效果，看一下视频也可以。
+
+如果希望亲手手操，并且也准备好了的环境的，请跟我继续。
+
+打开typeflow/newModel_v1_state_aliyun.puml,因看看见如下的图：
+![下图](http://www.plantuml.com/plantuml/png/bP9VQzim5CMVTp-5w7iBIzzA2SsVbGMojYniUnQMI4IbAoFTsr76llliQlODYHrm873iStxoyRs6Xqmw4GSFa5yTrZhfe2glSrP_uDDILw_x51dDAlgOxkzNCGIDPklGRh1c-eAcZWvfFbTBJlxzLum6LFExH2xIFa-a5zwzCtubgYU2pqoJye_EMs6cb7lUxQQ2Bvpi8sD5BcAJthhzWPQUxTXZo2RKvDxiYwP30woI2pdYSFoxpP5JPTiQAVv6-0jG5ll4uMEAwi9S_qSNnipKQL7nngnlxCdTZe9LnO6z9ZkMs4Pj9FLJUxPgVCuTjTDlTZfrGdHZKpB1FhfskTPK7Svhmr3Zcvknmw6jEY7UR-pwUgwUDdTt6oIxjmcETElr3Q4J7tUlFb-fjIHFp5anVw0Zw4Jh36rXw3rBTh6Lyuyl-W92mVgaTVkLdTqitn2qNWdDv057kd-79WY5AVYjn4LBdJRU_ClH4XKf1qjnaOLR2IYwaDtApeo1rSE3HSF1mpy0)
+这个模型是基于typeflow/newModel_v1_state.puml修改。对比[第三步:添加状态](#添加状态)的模型图，我们可以发现主要有三个改变：
+1. NumInput从\<<CommandLineInputEndpoint\>>改成了\<<AliyunHttpInputEndpoint\>>，这是阿里云提供的http request/response类型的触发器。
+2. Print输出端口去掉了，因为在云端运行的时候终端打印没有什么意义。取而代之的是原本流向Print的AC::Integer现在改为流回到NumInput，以便完成一个Request/Response。
+3. LoadAccumulateValue和SaveAccumulateValue两个输出端口从\<<FileOutputEndpoint\>>改成了\<<AliyunOSSOutputEndpoint\>>。它们的逻辑改为用OSS来做存储和读取。
+
+可以看到除了输入输出端口的修改外，内部的纯函数（业务逻辑）没有任何需要修改。那些不变的东西就是我们的领域模型。大家如果了解[端口适配器架构](https://herbertograca.com/2017/09/14/ports-adapters-architecture/)，就会发现我这个类型流就是一种端口适配器架构。
+```
+./genCodeAliyun.sh typeflow/newModel_v1_state_aliyun.puml
+```
+打开java目录可以看到原来的代码都在，代码生成工具并**不会自动删除图上没有的代码**。
+
+在scala目录下多了个aliyun目录，里面是对Java函数的包装，因为阿里云函数计算要求函数都要继承`StreamRequestHandler`，实现其中的
+```scala
+override def handleRequest(input: InputStream, output: OutputStream, context: Context): Unit = {
+}
+```
+这个方法。 类型流代码生成器通过生成适配器来避免业务代码和部署平台的耦合。
+
+大部分代码无需修改。 只有`LoadAccumulateValueHandler`和`SaveAccumulateValueHandler`这两个OSS输出端口是需要实现的。
+而自动生成的`SaveAccumulateValueHandler`已经很好的完成了功能，无需修改，唯一要改的就是`LoadAccumulateValueHandler`了。
+打开生成的代码可以看到已经生成包含ossClient在内的代码骨架，具体的代码可以参考`ref_code/LoadAccumulateValueHandler`。
+
+需要注意的是代码里的这几行：
+```scala
+    val accessKey = System.getenv("ACCESS_KEY")
+    val accessSecretKey = System.getenv("SECRET_KEY")
+    val accountId = System.getenv("ACCOUNT_ID")
+    val bucketName = System.getenv("BUCKET_NAME")
+    val objectName = System.getenv("OBJECT_NAME")
+```
+这几行是读取环境变量，需要你的阿里云管理控制台的相应函数的配置界面配置这些环境变量。
+
+除了这些代码之外，类型流代码生成器还自动生成了工程根目录下的`template.yml`, `fun`命令行工具会根据这个配置文件来向阿里云部署应用。
+
+确认代码无误后，运行`sbt assembly`编译打包代码，`sbt assembly`会把所有编译后的代码和第三方库一起打成一个大jar包（fat jar），这样部署到云端后就不用多管依赖库的问题了。
+
+打包完成后，运行`./deploy-aliyun.sh`把应用部署到云端。
+
+另外，`LoadAccumulateValueHandler`需要读取OSS存储内容，如果读不到会报错。所以我们先把包含初始数据的`accu.txt`传上去。
+```scala
+
+```
+
 ### 异常处理
+
 ### 自定义类型和中文建模
