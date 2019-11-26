@@ -174,7 +174,7 @@ ok,执行以下，输入1，2，3后，我的record.txt文件记录了如下内�
 阿里云资源的购买和配置我这里就不多说了，请自行查阅阿里云的文档。 在本地需要配置好[ossutil](https://helpcdn.aliyun.com/document_detail/50452.html)和[fun](https://help.aliyun.com/document_detail/64204.html). 
 配置好你的阿里云账户。注意用fun需要使用你的root账户的ACCESS_KEY等，不能用另建的安全账户，否则会出错。
 
-另外，我准备了一段视频，你如果只是想了解操作的过程和效果，看一下视频也可以。
+另外，我准备了[一段视频](https://www.bilibili.com/video/av77104359/)，你如果只是想了解操作的过程和效果，看一下视频也可以。
 
 如果希望亲手手操，并且也准备好了的环境的，请跟我继续。
 
