@@ -1,0 +1,46 @@
+
+@startuml
+
+skinparam class {
+	BackgroundColor<<CommandLineInputEndpoint>> BurlyWood
+    BackgroundColor<<CommandLineArgsInputEndpoint>> BurlyWood
+    BackgroundColor<<AliyunHttpInputEndpoint>> BurlyWood
+    BackgroundColor<<OutputEndpoint>> BurlyWood
+    BackgroundColor<<FileOutputEndpoint>> BurlyWood
+    BackgroundColor<<PureFunction>> LightBlue
+    BackgroundColor<<AlternativePath>> Crimson
+    BackgroundColor<<Resource>> Brown
+}
+
+class NumInput <<CommandLineInputEndpoint>>
+class Add2 <<PureFunction>>
+class Add <<PureFunction>>
+class Print <<OutputEndpoint>>
+class Multi3 <<PureFunction>>
+class Accumulate <<PureFunction>> #LightGreen
+class LoadAccumulateValue <<FileOutputEndpoint>> #LightGreen
+class SaveAccumulateValue <<FileOutputEndpoint>> #LightGreen
+class AccumulateValueResource <<Resource>> #LightGreen
+class Dispatch <<PureFunction>> #LightGreen
+
+LoadAccumulateValue .. AccumulateValueResource
+SaveAccumulateValue .. AccumulateValueResource
+NumInput --> NI::Integer
+NI::Integer --> Dispatch
+Dispatch --> "1" DI::Integer
+Dispatch --> "2" DI::Unit
+DI::Unit --> LoadAccumulateValue
+LoadAccumulateValue --> LAL::Integer
+LAL::Integer --> "1" Accumulate
+DI::Integer --> Add2
+DI::Integer --> Multi3
+Add2 --> A2::Integer
+A2::Integer --> "2" Add
+Multi3 --> M3::Integer
+M3::Integer --> "1" Add
+Add --> A::Integer
+A::Integer --> "2" Accumulate
+Accumulate --> AC::Integer
+AC::Integer --> Print
+AC::Integer --> SaveAccumulateValue
+@enduml
