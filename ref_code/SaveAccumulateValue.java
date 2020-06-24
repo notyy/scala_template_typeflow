@@ -1,31 +1,23 @@
 package com.github.notyy.example;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 public class SaveAccumulateValue {
     public void execute(Integer param1) {
         //TODO give me path
-        File file = new File("./localoutput/accu.txt");
-        BufferedWriter writer = null;
-        try {
-            //using append mode, if you need overwritten mode, set false.
-            writer = new BufferedWriter(new FileWriter(file, false));
+        Path file = Paths.get("./localoutput/accu.txt");
+
+        try (BufferedWriter writer = Files.newBufferedWriter(file, StandardOpenOption.WRITE)) {
             writer.write(param1.toString());
             writer.newLine();
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-            if(writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }
