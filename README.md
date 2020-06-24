@@ -85,14 +85,16 @@ public class Dispatch {
 注意LoadAccumulateValue和SaveAccumulateValue是根据同一个写文本文件的代码模板生成的，没有给读写提供不同的模板。
 因此会需要一些修改：
 
-`LoadAccumulateValue`第11行，修改保存累计值的文本文件的路径，因为代码生成器不知道该值。
+`LoadAccumulateValue`第13行，修改保存累计值的文本文件的路径，因为代码生成器不知道该值。
+
+```java
+Path file = Paths.get("./localoutput/accu.txt");
 ```
-File file = new File("./localoutput/accu.txt");
-```
+
 如果你没耐心自己慢慢写，在ref_code目录下有我的参考实现，但我已经好几年没写Java，所以应该已经不是fashion的写法了。如果你能contribute最新的写法更好。
 
-然后是`SaveAccumulateValue`,第11行务必用相同的文件路径。 
-然后**注意**第15行的true改成false，这样就只会覆盖同行累计值。
+然后是`SaveAccumulateValue`,第13行务必用相同的文件路径。 
+然后**注意**第16行的 `StandardOpenOption.APPEND` 改成 `StandardOpenOption.WRITE` ，这样就只会覆盖同行累计值。
 
 看一下NumInput，新的调用链已经生成好了，可以检查一下有没有问题。
 
@@ -119,17 +121,23 @@ File file = new File("./localoutput/accu.txt");
 增加的这个Record，根据入参可知，它记录每次用户输入和计算的最终结果。 仅仅通过模型，我们就可以非常确定程序原有的功能没有收到任何影响。
 
 废话少说，生成代码,记得要删除NumInput以便生成新的调用链，别的都不用改。
+
 ```
 ./genCode.sh typeflow/newModel_v1_record.puml
 ```
-第11行改成
+
+第13行改成
+
+```java
+Path file = Paths.get("./localoutput/record.txt");
 ```
-File file = new File("./localoutput/record.txt");
-```
-第15行改成
-```
+
+第17行改成
+
+```java
 writer.write(param1.toString() + "," + param2.toString());
 ```
+
 另外就是把localoutput/accu.txt记录的之前的累计值删除，以方便我们干净的重来。
 
 ok,执行以下，输入1，2，3后，我的record.txt文件记录了如下内容：
